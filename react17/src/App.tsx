@@ -14,6 +14,13 @@ function App() {
     setFlag(!flag);
   };
 
+  // const handleClick = () => {
+  //   setTimeout(() => {
+  //     setCount(count + 1);
+  //     setFlag(!flag);
+  //   }, 0);
+  // };
+
   useEffect(() => {
     rerender++;
     console.log(
