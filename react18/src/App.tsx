@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
+import { flushSync } from "react-dom";
 
 let rerender = 0;
 
@@ -15,10 +16,12 @@ function App() {
   // };
 
   const handleClick = () => {
-    setTimeout(() => {
+    flushSync(() => {
       setCount(count + 1);
+    });
+    flushSync(() => {
       setFlag(!flag);
-    }, 0);
+    });
   };
 
   useEffect(() => {
