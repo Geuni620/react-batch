@@ -1,55 +1,56 @@
-import { useState, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { useState, useRef } from "react";
 import { flushSync } from "react-dom";
 
-let rerender = 0;
+type Todo = {
+  id: number;
+  text: string;
+};
 
-function App() {
-  const [count, setCount] = useState(0);
-  const [flag, setFlag] = useState(false);
+export default function TodoList() {
+  const listRef = useRef<HTMLUListElement>(null);
+  const [text, setText] = useState("");
+  const [todos, setTodos] = useState<Todo[]>(initialTodos);
 
-  // const handleClick = () => {
-  //   setCount(count + 1);
-  //   setFlag(!flag);
-  // };
+  // function handleAdd() {
+  //   const newTodo = { id: nextId++, text: text };
+  //   setText("");
+  //   setTodos([...todos, newTodo]);
+  //   listRef.current.lastChild.scrollIntoView({
+  //     behavior: "smooth",
+  //     block: "nearest",
+  //   });
+  // }
 
-  const handleClick = () => {
+  function handleAdd() {
+    const newTodo = { id: nextId++, text: text };
     flushSync(() => {
-      setCount(count + 1);
+      setText("");
+      setTodos([...todos, newTodo]);
     });
-    flushSync(() => {
-      setFlag(!flag);
-    });
-  };
+    const lastChild = listRef.current?.lastChild as Element | null;
 
-  useEffect(() => {
-    rerender++;
-    console.log(
-      "몇 번의 렌더링이 이루어지나요?",
-      rerender,
-      "counter: ",
-      count,
-      "flag: ",
-      flag
-    );
-  }, [count, flag]);
+    if (lastChild) {
+      lastChild.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }
 
   return (
-    <section>
-      <h1>React 18 + Vite</h1>
-      <div>
-        <p>Count: {count}</p>
-        <p>Flag: {flag.toString()}</p>
-      </div>
-      <img src={reactLogo} alt="React Logo" width="120" />
-      <img src={viteLogo} alt="Vite Logo" width="120" />
-      <p>
-        <button onClick={handleClick}>count is: {count}</button>
-      </p>
-    </section>
+    <>
+      <button onClick={handleAdd}>Add</button>
+      <input value={text} onChange={(e) => setText(e.target.value)} />
+      <ul ref={listRef}>
+        {todos.map((todo) => (
+          <li key={todo.id}>{todo.text}</li>
+        ))}
+      </ul>
+    </>
   );
 }
 
-export default App;
+let nextId = 0;
+const initialTodos: Todo[] = Array.from({ length: 20 }, () => {
+  return { id: nextId++, text: "Todo #" + nextId };
+});
